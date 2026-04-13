@@ -1,17 +1,16 @@
 # incident-api
 
-Project backend portfolio berbasis Go untuk mengelola incident dan tiket operasional.
+Project Go sederhana untuk mencatat dan mengelola incident operasional.
 
-## Gambaran
+## Fitur
 
 - REST API menggunakan `net/http`
-- Fitur CRUD incident untuk alur kerja backend atau NOC
-- Penyimpanan berbasis file dengan validasi input
-- Endpoint health check untuk pengecekan service
-- Filtering dan pagination pada daftar incident
-- Header `X-Request-ID` untuk traceability request
-- Seed data awal untuk demo cepat
-- Cakupan test dasar pada layer handler
+- CRUD incident
+- Penyimpanan data ke file JSON
+- Health check
+- Filter dan pagination
+- Header `X-Request-ID`
+- Test dasar
 
 ## Endpoint
 
@@ -30,7 +29,7 @@ go run ./cmd/api
 Secara default server berjalan di `:8080`.
 Data akan disimpan di `data/incidents.json`.
 
-Jika ingin mengganti port:
+Untuk ganti port:
 
 ```bash
 PORT=8081 go run ./cmd/api
