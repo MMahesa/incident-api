@@ -1,19 +1,19 @@
 # incident-api
 
-Backend portfolio project in Go for managing incidents and operational tickets.
+Project backend portfolio berbasis Go untuk mengelola incident dan tiket operasional.
 
-## Highlights
+## Gambaran
 
-- REST API with `net/http`
-- Incident CRUD basics for NOC/backend workflows
-- File-based persistence with validation
-- Health endpoint for service checks
-- Filtering and pagination on incident listing
-- Request ID response header for traceability
-- Seed data for quick demo
-- Basic handler test coverage
+- REST API menggunakan `net/http`
+- Fitur CRUD incident untuk alur kerja backend atau NOC
+- Penyimpanan berbasis file dengan validasi input
+- Endpoint health check untuk pengecekan service
+- Filtering dan pagination pada daftar incident
+- Header `X-Request-ID` untuk traceability request
+- Seed data awal untuk demo cepat
+- Cakupan test dasar pada layer handler
 
-## Endpoints
+## Endpoint
 
 - `GET /healthz`
 - `GET /v1/incidents`
@@ -21,16 +21,31 @@ Backend portfolio project in Go for managing incidents and operational tickets.
 - `PUT /v1/incidents/{id}`
 - `DELETE /v1/incidents/{id}`
 
-## Run
+## Kegunaan Project
+
+Project ini cocok untuk menunjukkan dasar kemampuan backend, terutama untuk kasus operasional seperti:
+
+- pencatatan incident layanan
+- pelacakan status penanganan gangguan
+- pengelolaan tiket internal sederhana
+- dasar API untuk dashboard monitoring atau sistem NOC
+
+## Menjalankan Project
 
 ```bash
 go run ./cmd/api
 ```
 
-Server listens on `:8080` by default.
-Data is persisted in `data/incidents.json`.
+Secara default server berjalan di `:8080`.
+Data akan disimpan di `data/incidents.json`.
 
-## Example Request
+Jika ingin mengganti port:
+
+```bash
+PORT=8081 go run ./cmd/api
+```
+
+## Contoh Request
 
 ```bash
 curl -X POST http://localhost:8080/v1/incidents \
@@ -45,7 +60,7 @@ curl -X POST http://localhost:8080/v1/incidents \
   }'
 ```
 
-## Example Filters
+## Contoh Filter
 
 ```bash
 curl "http://localhost:8080/v1/incidents?status=investigating&service=auth-service&limit=5&offset=0"
