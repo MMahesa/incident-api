@@ -55,3 +55,36 @@ curl -X POST http://localhost:8080/v1/incidents \
 ```bash
 curl "http://localhost:8080/v1/incidents?status=investigating&service=auth-service&limit=5&offset=0"
 ```
+
+## Contoh Output
+
+```json
+{
+  "data": [
+    {
+      "id": 2,
+      "title": "Packet loss on uplink",
+      "service": "edge-router",
+      "severity": "critical",
+      "status": "mitigated"
+    },
+    {
+      "id": 1,
+      "title": "API latency spike",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "investigating"
+    }
+  ],
+  "meta": {
+    "count": 2,
+    "limit": 0,
+    "offset": 0,
+    "total": 2
+  }
+}
+```
+
+## Terminal Snapshot
+
+![Terminal output](./assets/terminal-output.png)
