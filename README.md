@@ -21,15 +21,6 @@ Project backend portfolio berbasis Go untuk mengelola incident dan tiket operasi
 - `PUT /v1/incidents/{id}`
 - `DELETE /v1/incidents/{id}`
 
-## Kegunaan Project
-
-Project ini cocok untuk menunjukkan dasar kemampuan backend, terutama untuk kasus operasional seperti:
-
-- pencatatan incident layanan
-- pelacakan status penanganan gangguan
-- pengelolaan tiket internal sederhana
-- dasar API untuk dashboard monitoring atau sistem NOC
-
 ## Menjalankan Project
 
 ```bash
