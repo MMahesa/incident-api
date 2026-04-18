@@ -70,6 +70,7 @@ type ListOptions struct {
 	Severity Severity
 	Owner    string
 	Search   string
+	Sort     string
 	Limit    int
 	Offset   int
 }
@@ -138,7 +139,15 @@ func (s *FileStore) List(_ context.Context, options ListOptions) (ListResult, er
 	defer s.mu.RUnlock()
 
 	items := slices.Clone(s.items)
-	slices.Reverse(items)
+	if strings.EqualFold(options.Sort, "oldest") {
+		slices.SortFunc(items, func(left, right Incident) int {
+			return left.CreatedAt.Compare(right.CreatedAt)
+		})
+	} else {
+		slices.SortFunc(items, func(left, right Incident) int {
+			return right.CreatedAt.Compare(left.CreatedAt)
+		})
+	}
 	filtered := make([]Incident, 0, len(items))
 	for _, item := range items {
 		if !matches(item, options) {
@@ -373,12 +382,19 @@ func ParseListOptions(params map[string]string) ListOptions {
 		Severity: Severity(strings.TrimSpace(params["severity"])),
 		Owner:    strings.TrimSpace(params["owner"]),
 		Search:   strings.TrimSpace(params["search"]),
+		Sort:     strings.TrimSpace(params["sort"]),
 	}
 	if limit, err := strconv.Atoi(strings.TrimSpace(params["limit"])); err == nil {
 		options.Limit = limit
 	}
 	if offset, err := strconv.Atoi(strings.TrimSpace(params["offset"])); err == nil {
 		options.Offset = offset
+	}
+	if options.Limit > 100 {
+		options.Limit = 100
+	}
+	if !strings.EqualFold(options.Sort, "oldest") {
+		options.Sort = "newest"
 	}
 	return options
 }

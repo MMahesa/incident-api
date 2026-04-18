@@ -39,12 +39,32 @@ func TestIncidentLifecycle(t *testing.T) {
 		t.Fatal("expected X-Request-ID header to be set")
 	}
 
-	request = httptest.NewRequest(http.MethodGet, "/v1/incidents?status=open&limit=10&offset=0", nil)
+	secondBody := map[string]any{
+		"title":       "Queue delay",
+		"service":     "job-runner",
+		"severity":    "medium",
+		"status":      "open",
+		"description": "Queue processing delay increased",
+		"owner":       "platform-team",
+	}
+	payload, _ = json.Marshal(secondBody)
+	request = httptest.NewRequest(http.MethodPost, "/v1/incidents", bytes.NewReader(payload))
+	recorder = httptest.NewRecorder()
+	handler.ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusCreated {
+		t.Fatalf("expected 201 for second create, got %d", recorder.Code)
+	}
+
+	request = httptest.NewRequest(http.MethodGet, "/v1/incidents?status=open&limit=999&offset=0&sort=oldest", nil)
 	recorder = httptest.NewRecorder()
 	handler.ServeHTTP(recorder, request)
 
 	if recorder.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", recorder.Code)
+	}
+	if !bytes.Contains(recorder.Body.Bytes(), []byte(`"sort":"oldest"`)) {
+		t.Fatal("expected sort metadata in response")
 	}
 
 	request = httptest.NewRequest(http.MethodGet, "/v1/incidents/1", nil)

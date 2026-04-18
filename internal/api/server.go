@@ -73,6 +73,7 @@ func (s *Server) handleListIncidents(w http.ResponseWriter, r *http.Request) {
 		"severity": r.URL.Query().Get("severity"),
 		"owner":    r.URL.Query().Get("owner"),
 		"search":   r.URL.Query().Get("search"),
+		"sort":     r.URL.Query().Get("sort"),
 		"limit":    r.URL.Query().Get("limit"),
 		"offset":   r.URL.Query().Get("offset"),
 	})
@@ -90,6 +91,7 @@ func (s *Server) handleListIncidents(w http.ResponseWriter, r *http.Request) {
 			"limit":  options.Limit,
 			"offset": options.Offset,
 		},
+		"sort": options.Sort,
 	})
 }
 

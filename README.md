@@ -11,6 +11,7 @@ Layanan API sederhana berbasis Go untuk pencatatan dan pengelolaan incident oper
 - Penyimpanan data berbasis file JSON
 - Health check untuk verifikasi service
 - Filter dan pagination pada daftar incident
+- Sorting hasil daftar incident
 - Header `X-Request-ID` untuk identifikasi request
 - Pengujian dasar pada layer API
 
@@ -78,6 +79,12 @@ Menggunakan filter:
 
 ```bash
 curl "http://localhost:8080/v1/incidents?status=investigating&service=auth-service&limit=5&offset=0"
+```
+
+Mengurutkan daftar incident dari yang paling lama:
+
+```bash
+curl "http://localhost:8080/v1/incidents?sort=oldest&limit=10"
 ```
 
 ## Terminal Snapshot
