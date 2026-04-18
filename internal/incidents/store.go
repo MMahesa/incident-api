@@ -79,8 +79,17 @@ type ListResult struct {
 	Total int
 }
 
+type Stats struct {
+	Total      int              `json:"total"`
+	ByStatus   map[Status]int   `json:"by_status"`
+	BySeverity map[Severity]int `json:"by_severity"`
+	ByService  map[string]int   `json:"by_service"`
+}
+
 type Store interface {
 	List(context.Context, ListOptions) (ListResult, error)
+	Get(context.Context, int64) (Incident, error)
+	Stats(context.Context) (Stats, error)
 	Create(context.Context, CreateInput) (Incident, error)
 	Update(context.Context, int64, UpdateInput) (Incident, error)
 	Delete(context.Context, int64) error
@@ -184,6 +193,19 @@ func (s *FileStore) Create(_ context.Context, input CreateInput) (Incident, erro
 	return item, nil
 }
 
+func (s *FileStore) Get(_ context.Context, id int64) (Incident, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	for _, item := range s.items {
+		if item.ID == id {
+			return item, nil
+		}
+	}
+
+	return Incident{}, ErrNotFound
+}
+
 func (s *FileStore) Update(_ context.Context, id int64, input UpdateInput) (Incident, error) {
 	if err := validate(input.Title, input.Service, input.Severity, input.Status); err != nil {
 		return Incident{}, err
@@ -214,6 +236,26 @@ func (s *FileStore) Update(_ context.Context, id int64, input UpdateInput) (Inci
 	}
 
 	return Incident{}, ErrNotFound
+}
+
+func (s *FileStore) Stats(_ context.Context) (Stats, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	stats := Stats{
+		Total:      len(s.items),
+		ByStatus:   make(map[Status]int),
+		BySeverity: make(map[Severity]int),
+		ByService:  make(map[string]int),
+	}
+
+	for _, item := range s.items {
+		stats.ByStatus[item.Status]++
+		stats.BySeverity[item.Severity]++
+		stats.ByService[item.Service]++
+	}
+
+	return stats, nil
 }
 
 func (s *FileStore) Delete(_ context.Context, id int64) error {

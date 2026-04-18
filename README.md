@@ -1,11 +1,13 @@
 # incident-api
 
-Project Go sederhana untuk mencatat dan mengelola incident operasional.
+API kecil untuk nyatet incident operasional. Saya buat ini buat latihan bikin service Go yang simpel tapi tetap kepakai untuk kasus monitoring atau tiket internal.
 
 ## Fitur
 
 - REST API menggunakan `net/http`
 - CRUD incident
+- Ambil detail incident per ID
+- Endpoint statistik sederhana
 - Penyimpanan data ke file JSON
 - Health check
 - Filter dan pagination
@@ -16,6 +18,8 @@ Project Go sederhana untuk mencatat dan mengelola incident operasional.
 
 - `GET /healthz`
 - `GET /v1/incidents`
+- `GET /v1/incidents/{id}`
+- `GET /v1/incidents/stats`
 - `POST /v1/incidents`
 - `PUT /v1/incidents/{id}`
 - `DELETE /v1/incidents/{id}`
@@ -35,7 +39,15 @@ Untuk ganti port:
 PORT=8081 go run ./cmd/api
 ```
 
-## Contoh Request
+## Cara Coba Cepat
+
+Lihat daftar incident:
+
+```bash
+curl http://localhost:8080/v1/incidents
+```
+
+Tambah incident baru:
 
 ```bash
 curl -X POST http://localhost:8080/v1/incidents \
@@ -50,39 +62,22 @@ curl -X POST http://localhost:8080/v1/incidents \
   }'
 ```
 
-## Contoh Filter
+Lihat detail incident:
+
+```bash
+curl http://localhost:8080/v1/incidents/1
+```
+
+Lihat statistik:
+
+```bash
+curl http://localhost:8080/v1/incidents/stats
+```
+
+Contoh filter:
 
 ```bash
 curl "http://localhost:8080/v1/incidents?status=investigating&service=auth-service&limit=5&offset=0"
-```
-
-## Contoh Output
-
-```json
-{
-  "data": [
-    {
-      "id": 2,
-      "title": "Packet loss on uplink",
-      "service": "edge-router",
-      "severity": "critical",
-      "status": "mitigated"
-    },
-    {
-      "id": 1,
-      "title": "API latency spike",
-      "service": "auth-service",
-      "severity": "high",
-      "status": "investigating"
-    }
-  ],
-  "meta": {
-    "count": 2,
-    "limit": 0,
-    "offset": 0,
-    "total": 2
-  }
-}
 ```
 
 ## Terminal Snapshot

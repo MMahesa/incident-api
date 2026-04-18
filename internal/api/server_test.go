@@ -47,6 +47,22 @@ func TestIncidentLifecycle(t *testing.T) {
 		t.Fatalf("expected 200, got %d", recorder.Code)
 	}
 
+	request = httptest.NewRequest(http.MethodGet, "/v1/incidents/1", nil)
+	recorder = httptest.NewRecorder()
+	handler.ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("expected 200 on get by id, got %d", recorder.Code)
+	}
+
+	request = httptest.NewRequest(http.MethodGet, "/v1/incidents/stats", nil)
+	recorder = httptest.NewRecorder()
+	handler.ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("expected 200 on stats, got %d", recorder.Code)
+	}
+
 	request = httptest.NewRequest(http.MethodDelete, "/v1/incidents/1", nil)
 	recorder = httptest.NewRecorder()
 	handler.ServeHTTP(recorder, request)

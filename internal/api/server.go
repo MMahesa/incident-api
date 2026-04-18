@@ -30,6 +30,8 @@ func NewServer(store incidents.Store) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", server.handleHealth)
 	mux.HandleFunc("GET /v1/incidents", server.handleListIncidents)
+	mux.HandleFunc("GET /v1/incidents/stats", server.handleIncidentStats)
+	mux.HandleFunc("GET /v1/incidents/{id}", server.handleGetIncident)
 	mux.HandleFunc("POST /v1/incidents", server.handleCreateIncident)
 	mux.HandleFunc("PUT /v1/incidents/{id}", server.handleUpdateIncident)
 	mux.HandleFunc("DELETE /v1/incidents/{id}", server.handleDeleteIncident)
@@ -42,6 +44,26 @@ func (s *Server) handleHealth(w http.ResponseWriter, _ *http.Request) {
 		"status":    "ok",
 		"timestamp": time.Now().UTC(),
 	})
+}
+
+func (s *Server) handleGetIncident(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, errors.New("invalid incident id"))
+		return
+	}
+
+	item, err := s.store.Get(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, incidents.ErrNotFound) {
+			writeError(w, http.StatusNotFound, err)
+			return
+		}
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{"data": item})
 }
 
 func (s *Server) handleListIncidents(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +91,16 @@ func (s *Server) handleListIncidents(w http.ResponseWriter, r *http.Request) {
 			"offset": options.Offset,
 		},
 	})
+}
+
+func (s *Server) handleIncidentStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := s.store.Stats(r.Context())
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{"data": stats})
 }
 
 func (s *Server) handleCreateIncident(w http.ResponseWriter, r *http.Request) {
