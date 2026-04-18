@@ -1,18 +1,18 @@
 # incident-api
 
-API kecil untuk nyatet incident operasional. Saya buat ini buat latihan bikin service Go yang simpel tapi tetap kepakai untuk kasus monitoring atau tiket internal.
+Layanan API sederhana berbasis Go untuk pencatatan dan pengelolaan incident operasional.
 
 ## Fitur
 
 - REST API menggunakan `net/http`
-- CRUD incident
-- Ambil detail incident per ID
-- Endpoint statistik sederhana
-- Penyimpanan data ke file JSON
-- Health check
-- Filter dan pagination
-- Header `X-Request-ID`
-- Test dasar
+- Operasi CRUD untuk data incident
+- Endpoint detail incident berdasarkan ID
+- Endpoint statistik ringkas untuk rekap incident
+- Penyimpanan data berbasis file JSON
+- Health check untuk verifikasi service
+- Filter dan pagination pada daftar incident
+- Header `X-Request-ID` untuk identifikasi request
+- Pengujian dasar pada layer API
 
 ## Endpoint
 
@@ -30,24 +30,24 @@ API kecil untuk nyatet incident operasional. Saya buat ini buat latihan bikin se
 go run ./cmd/api
 ```
 
-Secara default server berjalan di `:8080`.
-Data akan disimpan di `data/incidents.json`.
+Secara default server berjalan pada `:8080`.
+Data disimpan pada `data/incidents.json`.
 
-Untuk ganti port:
+Untuk menggunakan port lain:
 
 ```bash
 PORT=8081 go run ./cmd/api
 ```
 
-## Cara Coba Cepat
+## Contoh Penggunaan
 
-Lihat daftar incident:
+Melihat daftar incident:
 
 ```bash
 curl http://localhost:8080/v1/incidents
 ```
 
-Tambah incident baru:
+Menambahkan incident baru:
 
 ```bash
 curl -X POST http://localhost:8080/v1/incidents \
@@ -62,19 +62,19 @@ curl -X POST http://localhost:8080/v1/incidents \
   }'
 ```
 
-Lihat detail incident:
+Melihat detail incident:
 
 ```bash
 curl http://localhost:8080/v1/incidents/1
 ```
 
-Lihat statistik:
+Melihat statistik incident:
 
 ```bash
 curl http://localhost:8080/v1/incidents/stats
 ```
 
-Contoh filter:
+Menggunakan filter:
 
 ```bash
 curl "http://localhost:8080/v1/incidents?status=investigating&service=auth-service&limit=5&offset=0"
